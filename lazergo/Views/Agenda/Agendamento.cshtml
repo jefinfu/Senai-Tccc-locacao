@@ -1,0 +1,199 @@
+﻿@model AgendaModel
+
+@{
+    Layout = "_Layout";
+    Random random = new Random();
+}
+
+<div class="container mt-5">
+    <form method="post" asp-action="SalvarAgendamento" asp-controller="Agenda" enctype="multipart/form-data">
+        <h2 class="mb-4">Área De Lazer - @Model.Nometerreno</h2>
+
+        <input type="hidden" asp-for="Id" />
+
+        @if (Model.NomeImagem != null)
+        {
+            var imagens = Model.NomeImagem.Split(',');
+            var imagemAleatoria = imagens[random.Next(imagens.Length)];
+            <div class="card mx-auto my-3 text-center" style="width: 12rem;" data-images="@string.Join(",", imagens)">
+                <label for="ImageFile">
+                    <img src="/imagens/@imagemAleatoria" class="card-img-top img-thumbnail" style="width:190px; height:150px; cursor: pointer;" alt="Imagem do terreno" onclick="expandirImagem(this, '@string.Join(",", imagens)')">
+                </label>
+            </div>
+        }
+
+        <div class="row mb-3">
+            <div class="col-md-6 d-flex align-items-center">
+                <label class="form-label fw-bold me-2 mb-0">Nome do Terreno:</label>
+                <p class="card-text mb-0">@Model.Nometerreno</p>
+            </div>
+            <div class="col-md-6 d-flex align-items-center">
+                <label class="form-label fw-bold me-2 mb-0">Descrição:</label>
+                <p class="card-text mb-0">@Model.Descricao</p>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6 d-flex align-items-center">
+                <label class="form-label fw-bold me-2 mb-0">Valor:</label>
+                <p class="card-text mb-0">@Model.Valor</p>
+            </div>
+            <div class="col-md-6 d-flex align-items-center">
+                <label class="form-label fw-bold me-2 mb-0">Endereço:</label>
+                <p class="card-text mb-0">@Model.EnderecoTer</p>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6 d-flex align-items-center">
+                <label class="form-label fw-bold me-2 mb-0">Número:</label>
+                <p class="card-text mb-0">@Model.NumeroTer</p>
+            </div>
+            <div class="col-md-6 d-flex align-items-center">
+                <label class="form-label fw-bold me-2 mb-0">Bairro:</label>
+                <p class="card-text mb-0">@Model.BairroTer</p>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6 d-flex align-items-center">
+                <label class="form-label fw-bold me-2 mb-0">Cidade:</label>
+                <p class="card-text mb-0">@Model.CidadeTer</p>
+            </div>
+            <div class="col-md-6 d-flex align-items-center">
+                <label class="form-label fw-bold me-2 mb-0">CEP:</label>
+                <p class="card-text mb-0">@Model.CEPTer</p>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6 d-flex align-items-center">
+                <label class="form-label fw-bold me-2 mb-0">UF:</label>
+                <p class="card-text mb-0">@Model.UFTer</p>
+            </div>
+            <div class="col-md-6 d-flex align-items-center">
+                <label class="form-label fw-bold me-2 mb-0">Celular:</label>
+                <p class="card-text mb-0">@Model.CelularTer</p>
+            </div>
+        </div>
+
+        <h4 class="my-4 text-center">Faça Já o seu Agendamento Entre em contato com Proprietário Pelo celular</h4>
+
+        <div class="btn-box d-flex justify-content-center mt-3">
+            <a href="@Url.Action("Index", "Home")" class="btn btn-secondary mx-2"><i class="bi bi-arrow-left"></i> Voltar</a>
+        </div>
+    </form>
+</div>
+
+<script>
+
+
+    const inputFile = document.querySelector("#ImageFile");
+
+    inputFile.addEventListener("change", function (e) {
+        const inputTarget = e.target;
+        const file = inputTarget.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.addEventListener("load", function (e) {
+                const readerTarget = e.target;
+                const img = document.querySelector("#img");
+                img.src = readerTarget.result;
+
+                const figcaption = document.querySelector("#figcaption");
+                figcaption.innerHTML = file.name;
+            });
+
+            reader.readAsDataURL(file);
+        }
+    }
+
+
+    )
+</script>
+
+<script>
+    function changeImage(card) {
+        var imagens = card.dataset.images.split(',');
+        var randomIndex = Math.floor(Math.random() * imagens.length);
+        var novaImagem = imagens[randomIndex];
+        var imgElement = card.querySelector('img');
+        imgElement.src = '/imagens/' + novaImagem;
+    }
+
+    function changeImages() {
+        var cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            changeImage(card);
+        });
+    }
+
+    // Muda as imagens a cada 15 segundos (15000 milissegundos)
+    setInterval(changeImages, 15000);
+</script>
+
+<script>
+    function expandirImagem(imgElement, images) {
+        var imagens = images.split(',');
+        var modal = new bootstrap.Modal(document.getElementById('imagemModal'));
+        var imgExpandida = document.getElementById('imagemExpandida');
+        var prevButton = document.getElementById('prevButton');
+        var nextButton = document.getElementById('nextButton');
+
+        imgExpandida.dataset.images = images;
+        imgExpandida.dataset.currentIndex = imagens.indexOf(imgElement.src.split('/').pop());
+        imgExpandida.src = imgElement.src;
+
+        // Atualiza a visibilidade das setas
+        prevButton.style.display = (imgExpandida.dataset.currentIndex > 0) ? 'block' : 'none';
+        nextButton.style.display = (imgExpandida.dataset.currentIndex < imagens.length - 1) ? 'block' : 'none';
+
+        modal.show();
+    }
+
+    function changeImageModal(direction) {
+        var imgExpandida = document.getElementById('imagemExpandida');
+        var imagens = imgExpandida.dataset.images.split(',');
+        var currentIndex = parseInt(imgExpandida.dataset.currentIndex);
+        var newIndex = currentIndex + direction;
+        var prevButton = document.getElementById('prevButton');
+        var nextButton = document.getElementById('nextButton');
+
+        if (newIndex >= 0 && newIndex < imagens.length) {
+            imgExpandida.dataset.currentIndex = newIndex;
+            imgExpandida.src = '/imagens/' + imagens[newIndex];
+        }
+
+        // Atualiza a visibilidade das setas
+        prevButton.style.display = (newIndex > 0) ? 'block' : 'none';
+        nextButton.style.display = (newIndex < imagens.length - 1) ? 'block' : 'none';
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (document.getElementById('imagemModal').classList.contains('show')) {
+            if (event.key === 'ArrowRight') {
+                changeImageModal(1);
+            } else if (event.key === 'ArrowLeft') {
+                changeImageModal(-1);
+            }
+        }
+    });
+</script>
+
+<div class="modal fade" id="imagemModal" tabindex="-1" aria-labelledby="imagemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 80%;">
+        <div class="modal-content">
+            <div class="modal-body text-center position-relative">
+                <button type="button" class="btn btn-secondary position-absolute top-50 start-0 translate-middle-y" id="prevButton" onclick="changeImageModal(-1)" style="z-index: 1050;">
+                    <span aria-hidden="true">&lt;</span>
+                </button>
+                <img id="imagemExpandida" src="" class="img-fluid" alt="Imagem expandida">
+                <button type="button" class="btn btn-secondary position-absolute top-50 end-0 translate-middle-y" id="nextButton" onclick="changeImageModal(1)" style="z-index: 1050;">
+                    <span aria-hidden="true">&gt;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

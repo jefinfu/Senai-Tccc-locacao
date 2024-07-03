@@ -1,0 +1,155 @@
+﻿@model AgendaModel
+@{
+    Layout = "_Layout";
+    Random random = new Random();
+}
+
+<div class="container mt-5">
+    <form method="post" asp-action="Editar" asp-controller="Agenda" enctype="multipart/form-data">
+        <h2>Alterar cadastro do terreno: @Model.Nometerreno</h2>
+
+        <input type="hidden" asp-for="Id" />
+
+        @if (!string.IsNullOrEmpty(Model.NomeImagem))
+        {
+            var imagens = Model.NomeImagem.Split(',');
+            var imagemAleatoria = imagens[random.Next(imagens.Length)];
+            <div class="card mx-3 my-3 text-center">
+                <label for="ImageFile">
+                    <img src="/imagens/@imagemAleatoria" class="card-img-top img-thumbnail" style="width: 190px; height: 150px; cursor: pointer;" alt="Imagem do terreno" onclick="expandirImagem(this, '@string.Join(",", imagens)')" />
+                </label>
+            </div>
+        }
+
+        <div class="mb-1">
+            <label class="form-label mt-3">Nova Imagem:</label>
+            <input type="file" id="ImageFile" name="fotos" class="form-control shadow-none" />
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Nome do Terreno:</label>
+            <input type="text" asp-for="Nometerreno" class="form-control shadow-none" />
+            <span class="text-danger" asp-validation-for="Nometerreno"></span>
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Descrição:</label>
+            <textarea asp-for="Descricao" class="form-control shadow-none"></textarea>
+            <span class="text-danger" asp-validation-for="Descricao"></span>
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Valor:</label>
+            <input type="number" min="1" step="any" asp-for="Valor" class="form-control shadow-none" />
+            <span class="text-danger" asp-validation-for="Valor"></span>
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Proprietário:</label>
+            <input type="text" asp-for="ProprietarioTer" class="form-control shadow-none" />
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Endereço:</label>
+            <input type="text" asp-for="EnderecoTer" class="form-control shadow-none" />
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Número:</label>
+            <input type="text" asp-for="NumeroTer" class="form-control shadow-none" />
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Bairro:</label>
+            <input type="text" asp-for="BairroTer" class="form-control shadow-none" />
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Cidade:</label>
+            <input type="text" asp-for="CidadeTer" class="form-control shadow-none" />
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">CEP:</label>
+            <input type="text" asp-for="CEPTer" class="form-control shadow-none" />
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">UF:</label>
+            <input type="text" asp-for="UFTer" class="form-control shadow-none" />
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Celular:</label>
+            <input type="text" asp-for="CelularTer" class="form-control shadow-none" />
+        </div>
+
+        <div class="btn-box d-flex mt-3">
+            <button type="submit" class="btn btn-success w-50 mx-1" formaction="@Url.Action("Index", "Home")"><i class="bi bi-check"></i> Salvar</button>
+            <a href="@Url.Action("Index", "Agenda")" class="btn btn-secondary w-50 mx-1"><i class="bi bi-arrow-left"></i> Cancelar</a>
+            <a href="@Url.Action("Detalhes", "Agenda", new { id = Model.Id })" class="btn btn-primary w-50 mx-1"><i class="bi bi-info-circle"></i> Detalhes</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    function expandirImagem(imgElement, images) {
+        var imagens = images.split(',');
+        var modal = new bootstrap.Modal(document.getElementById('imagemModal'));
+        var imgExpandida = document.getElementById('imagemExpandida');
+        var prevButton = document.getElementById('prevButton');
+        var nextButton = document.getElementById('nextButton');
+
+        imgExpandida.dataset.images = images;
+        imgExpandida.dataset.currentIndex = imagens.indexOf(imgElement.src.split('/').pop());
+        imgExpandida.src = imgElement.src;
+
+        prevButton.style.display = (imgExpandida.dataset.currentIndex > 0) ? 'block' : 'none';
+        nextButton.style.display = (imgExpandida.dataset.currentIndex < imagens.length - 1) ? 'block' : 'none';
+
+        modal.show();
+    }
+
+    function changeImageModal(direction) {
+        var imgExpandida = document.getElementById('imagemExpandida');
+        var imagens = imgExpandida.dataset.images.split(',');
+        var currentIndex = parseInt(imgExpandida.dataset.currentIndex);
+        var newIndex = currentIndex + direction;
+        var prevButton = document.getElementById('prevButton');
+        var nextButton = document.getElementById('nextButton');
+
+        if (newIndex >= 0 && newIndex < imagens.length) {
+            imgExpandida.dataset.currentIndex = newIndex;
+            imgExpandida.src = '/imagens/' + imagens[newIndex];
+        }
+
+        prevButton.style.display = (newIndex > 0) ? 'block' : 'none';
+        nextButton.style.display = (newIndex < imagens.length - 1) ? 'block' : 'none';
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (document.getElementById('imagemModal').classList.contains('show')) {
+            if (event.key === 'ArrowRight') {
+                changeImageModal(1);
+            } else if (event.key === 'ArrowLeft') {
+                changeImageModal(-1);
+            }
+        }
+    });
+</script>
+
+<div class="modal fade" id="imagemModal" tabindex="-1" aria-labelledby="imagemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 80%;">
+        <div class="modal-content">
+            <div class="modal-body text-center position-relative">
+                <button type="button" class="btn btn-secondary position-absolute top-50 start-0 translate-middle-y" id="prevButton" onclick="changeImageModal(-1)" style="z-index: 1050;">
+                    <span aria-hidden="true">&lt;</span>
+                </button>
+                <img id="imagemExpandida" src="" class="img-fluid" alt="Imagem expandida">
+                <button type="button" class="btn btn-secondary position-absolute top-50 end-0 translate-middle-y" id="nextButton" onclick="changeImageModal(1)" style="z-index: 1050;">
+                    <span aria-hidden="true">&gt;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

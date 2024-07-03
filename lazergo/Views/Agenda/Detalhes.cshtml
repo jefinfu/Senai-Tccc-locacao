@@ -1,0 +1,187 @@
+﻿@model AgendaModel
+
+@{
+    Layout = "_Layout";
+    Random random = new Random();
+}
+
+<div class="container mt-5">
+    <form method="post" asp-action="Detalhes" asp-controller="Agenda" enctype="multipart/form-data">
+        <h2>Área De Lazer - @Model.Nometerreno</h2>
+
+        <input type="hidden" asp-for="Id" />
+
+        @if (Model.NomeImagem != null)
+        {
+            var imagens = Model.NomeImagem.Split(',');
+            var imagemAleatoria = imagens[random.Next(imagens.Length)];
+            <div class="card mx-3 my-3 text-center justify-content-center d-flex align-content-center" style="width: 12rem;" data-images="@string.Join(",", imagens)">
+                <label for="ImageFile">
+                    <img src="/imagens/@imagemAleatoria" class="card-img-top img-thumbnail" style="width:190px; height:150px; cursor: pointer;" alt="..." onclick="expandirImagem(this, '@string.Join(",", imagens)')">
+                </label>
+            </div>
+        }
+
+        <div class="mb-1">
+            <label class="form-label">Nome do Terreno:</label>
+            <h5 class="card-title">@Model.Nometerreno</h5>
+        </div>
+        <div class="mb-1">
+            <label class="form-label">Descrição:</label>
+            <h5 class="card-title">@Model.Descricao</h5>
+        </div>
+        <div class="mb-1">
+            <label class="form-label">Valor:</label>
+            <h5 class="card-title">@Model.Valor</h5>
+        </div>
+
+        <h4> Informações sobre Proprietário - @Model.ProprietarioTer</h4>
+
+        <div class="mb-1">
+            <label class="form-label">Nome:</label>
+            <h5 class="card-title">@Model.ProprietarioTer</h5>
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Celular:</label>
+            <h5 class="card-title">@Model.CelularTer</h5>
+        </div>
+        <div class="mb-1">
+            <label class="form-label">Endereço:</label>
+            <h5 class="card-title">@Model.EnderecoTer</h5>
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Número:</label>
+            <h5 class="card-title">@Model.NumeroTer</h5>
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Bairro:</label>
+            <h5 class="card-title">@Model.BairroTer</h5>
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Cidade:</label>
+            <h5 class="card-title">@Model.CidadeTer</h5>
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">CEP:</label>
+            <h5 class="card-title">@Model.CEPTer</h5>
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">UF:</label>
+            <h5 class="card-title">@Model.UFTer</h5>
+        </div>
+
+        <div class="mb-1">
+            <label class="form-label">Celular:</label>
+            <h5 class="card-title">@Model.CelularTer</h5>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    const inputFile = document.querySelector("#ImageFile");
+
+    inputFile.addEventListener("change", function (e) {
+        const inputTarget = e.target;
+        const file = inputTarget.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.addEventListener("load", function (e) {
+                const readerTarget = e.target;
+                const img = document.querySelector("#img");
+                img.src = readerTarget.result;
+
+                const figcaption = document.querySelector("#figcaption");
+                figcaption.innerHTML = file.name;
+            });
+
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function changeImage(card) {
+        var imagens = card.dataset.images.split(',');
+        var randomIndex = Math.floor(Math.random() * imagens.length);
+        var novaImagem = imagens[randomIndex];
+        var imgElement = card.querySelector('img');
+        imgElement.src = '/imagens/' + novaImagem;
+    }
+
+    function changeImages() {
+        var cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            changeImage(card);
+        });
+    }
+
+    setInterval(changeImages, 15000);
+
+    function expandirImagem(imgElement, images) {
+        var imagens = images.split(',');
+        var modal = new bootstrap.Modal(document.getElementById('imagemModal'));
+        var imgExpandida = document.getElementById('imagemExpandida');
+        var prevButton = document.getElementById('prevButton');
+        var nextButton = document.getElementById('nextButton');
+
+        imgExpandida.dataset.images = images;
+        imgExpandida.dataset.currentIndex = imagens.indexOf(imgElement.src.split('/').pop());
+        imgExpandida.src = imgElement.src;
+
+        prevButton.style.display = (imgExpandida.dataset.currentIndex > 0) ? 'block' : 'none';
+        nextButton.style.display = (imgExpandida.dataset.currentIndex < imagens.length - 1) ? 'block' : 'none';
+
+        modal.show();
+    }
+
+    function changeImageModal(direction) {
+        var imgExpandida = document.getElementById('imagemExpandida');
+        var imagens = imgExpandida.dataset.images.split(',');
+        var currentIndex = parseInt(imgExpandida.dataset.currentIndex);
+        var newIndex = currentIndex + direction;
+        var prevButton = document.getElementById('prevButton');
+        var nextButton = document.getElementById('nextButton');
+
+        if (newIndex >= 0 && newIndex < imagens.length) {
+            imgExpandida.dataset.currentIndex = newIndex;
+            imgExpandida.src = '/imagens/' + imagens[newIndex];
+        }
+
+        prevButton.style.display = (newIndex > 0) ? 'block' : 'none';
+        nextButton.style.display = (newIndex < imagens.length - 1) ? 'block' : 'none';
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (document.getElementById('imagemModal').classList.contains('show')) {
+            if (event.key === 'ArrowRight') {
+                changeImageModal(1);
+            } else if (event.key === 'ArrowLeft') {
+                changeImageModal(-1);
+            }
+        }
+    });
+</script>
+
+<div class="modal fade" id="imagemModal" tabindex="-1" aria-labelledby="imagemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 80%;">
+        <div class="modal-content">
+            <div class="modal-body text-center position-relative">
+                <button type="button" class="btn btn-secondary position-absolute top-50 start-0 translate-middle-y" id="prevButton" onclick="changeImageModal(-1)" style="z-index: 1050;">
+                    <span aria-hidden="true">&lt;</span>
+                </button>
+                <img id="imagemExpandida" src="" class="img-fluid" alt="Imagem expandida">
+                <button type="button" class="btn btn-secondary position-absolute top-50 end-0 translate-middle-y" id="nextButton" onclick="changeImageModal(1)" style="z-index: 1050;">
+                    <span aria-hidden="true">&gt;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,331 @@
+﻿@using lazergo.Dto
+@model UsuarioCriacaoDto
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.6/jquery.inputmask.min.js"></script>
+
+@if (TempData["MensagemErro"] != null)
+{
+    <div class="alert alert-danger text-dark" role="alert">
+        @TempData["MensagemErro"]
+    </div>
+}
+
+@if (TempData["MensagemSucesso"] != null)
+{
+    <div class="alert alert-danger text-dark" role="alert">
+        @TempData["MensagemSucesso"]
+    </div>
+}
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <form method="post" asp-action="Cadastrar" asp-controller="Usuario">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label><b>Tipo de pessoa</b></label>
+                <select asp-for="TipoPessoa" class="form-control" id="tipoPessoa">
+                    <option value="">Selecione o Tipo de Pessoa</option>
+                    <option value="Física">Física</option>
+                    <option value="Jurídica">Jurídica</option>
+                </select>
+                <span asp-validation-for="TipoPessoa" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label><b>Papel na locação</b></label>
+                <select asp-for="TipoUsuario" class="form-control">
+                    <option value="">Selecione o Tipo de Pessoa</option>
+                    <option value="Admin">Locador</option>
+                    <option value="User">Locatário</option>
+                </select>
+                <span asp-validation-for="TipoUsuario" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label><b>Nome Completo</b></label>
+            <input asp-for="Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label><b>Data de Nascimento</b></label>
+                <input asp-for="DtNascimento" class="form-control" />
+                <span asp-validation-for="DtNascimento" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label id="cpfCnpjLabel"><b>CPF</b></label>
+                <input asp-for="CPF" type="text" class="form-control" id="cpfCnpj" maxlength="15" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
+                <span asp-validation-for="CPF" class="text-danger"></span>
+                <span id="cpfCnpjError" class="text-danger" style="display:none;">CPF ou CNPJ inválido</span>
+            </div>
+
+            <div class="col-md-6">
+                <label><b>Sexo</b></label>
+                <select asp-for="Sexo" class="form-control">
+                    <option value="">Selecione o Sexo</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Feminino">Feminino</option>
+                    <option value="Não Declarado">Não Declarado</option>
+                </select>
+                <span asp-validation-for="Sexo" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label><b>Celular</b></label>
+                <input asp-for="Celular" id="Celular" class="form-control telefone" maxlength="14" />
+                <span asp-validation-for="Celular" class="text-danger"></span>
+            </div>
+
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="CEP" class="form-label"><b>CEP</b></label>
+                <input asp-for="CEP" id="CEP" type="text" class="form-control" maxlength="8" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);" />
+                <span asp-validation-for="CEP" class="text-danger"></span>
+            </div>
+            <div class="col-md-9">
+                <label for="Endereco" class="form-label"><b>Endereço</b></label>
+                <input asp-for="Endereco" class="form-control" />
+                <span asp-validation-for="Endereco" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-9">
+                <label><b>Bairro</b></label>
+                <input asp-for="Bairro" class="form-control" />
+                <span asp-validation-for="Bairro" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-3">
+                <label><b>Número</b></label>
+                <input asp-for="Numero" class="form-control" />
+                <span asp-validation-for="Numero" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-9">
+                <label><b>Cidade</b></label>
+                <input asp-for="Cidade" class="form-control" />
+                <span asp-validation-for="Cidade" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-3">
+                <label><b>Estado</b></label>
+                <select asp-for="UF" class="form-control">
+                    <option value="">Selecione um estado</option>
+                    <option value="AC">AC</option>
+                    <option value="AL">AL</option>
+                    <option value="AP">AP</option>
+                    <option value="AM">AM</option>
+                    <option value="BA">BA</option>
+                    <option value="CE">CE</option>
+                    <option value="DF">DF</option>
+                    <option value="ES">ES</option>
+                    <option value="GO">GO</option>
+                    <option value="MA">MA</option>
+                    <option value="MT">MT</option>
+                    <option value="MS">MS</option>
+                    <option value="MG">MG</option>
+                    <option value="PA">PA</option>
+                    <option value="PB">PB</option>
+                    <option value="PR">PR</option>
+                    <option value="PE">PE</option>
+                    <option value="PI">PI</option>
+                    <option value="RJ">RJ</option>
+                    <option value="RN">RN</option>
+                    <option value="RS">RS</option>
+                    <option value="RO">RO</option>
+                    <option value="RR">RR</option>
+                    <option value="SC">SC</option>
+                    <option value="SP">SP</option>
+                    <option value="SE">SE</option>
+                    <option value="TO">TO</option>
+                </select>
+                <span asp-validation-for="UF" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label><b>Observação</b></label>
+            <input asp-for="Observacao" class="form-control" />
+            <span asp-validation-for="Observacao" class="text-danger"></span>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label><b>Usuário</b></label>
+                <input type="text" class="form-control" asp-for="Usuario" />
+                <span asp-validation-for="Usuario" class="text-danger"></span>
+            </div>
+            <div class="col-md-8">
+                <label><b>Email</b></label>
+                <input type="email" class="form-control" asp-for="Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label><b>Senha</b></label>
+                <input type="password" class="form-control" asp-for="Senha" />
+                <span asp-validation-for="Senha" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label><b>Confirma Senha</b></label>
+                <input type="password" class="form-control" asp-for="ConfirmaSenha" />
+                <span asp-validation-for="ConfirmaSenha" class="text-danger"></span>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success text-center w-100 mb-3" style="color: black; font-weight:bold">Cadastrar</button>
+        <a class="btn btn-info text-center w-100" style="color: black; font-weight:bold" asp-controller="Home" asp-action="Index">Voltar</a>
+
+    </form>
+</div>
+
+<div class="modal fade" id="idadeModal" tabindex="-1" role="dialog" aria-labelledby="idadeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="idadeModalLabel">Atenção</h5>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage" style="font-size: 1.5rem;">Cadastro só para maiores de 18 anos</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('CEP').addEventListener('blur', function () {
+        var cep = this.value.replace(/\D/g, '');
+
+        if (cep != "") {
+            var validacep = /^[0-9]{8}$/;
+
+            if (validacep.test(cep)) {
+                var script = document.createElement('script');
+
+                script.src = 'https://viacep.com.br/ws/' + cep + '/json/?callback=meu_callback';
+                document.body.appendChild(script);
+            } else {
+                alert("Formato de CEP inválido.");
+            }
+        }
+    });
+
+    function meu_callback(conteudo) {
+        if (!("erro" in conteudo)) {
+            document.getElementById('Endereco').value = conteudo.logradouro;
+            document.getElementById('Bairro').value = conteudo.bairro;
+            document.getElementById('Cidade').value = conteudo.localidade;
+            document.getElementById('UF').value = conteudo.uf;
+        } else {
+            alert("CEP não encontrado.");
+        }
+    }
+
+    document.getElementById('tipoPessoa').addEventListener('change', function () {
+        var label = document.getElementById('cpfCnpjLabel');
+        var input = document.getElementById('cpfCnpj');
+        if (this.value === 'Física') {
+            label.innerHTML = '<b>CPF</b>';
+            input.setAttribute('maxlength', '11');
+        } else if (this.value === 'Jurídica') {
+            label.innerHTML = '<b>CNPJ</b>';
+            input.setAttribute('maxlength', '14');
+        }
+        input.value = ''; 
+        document.getElementById('cpfCnpjError').style.display = 'none'; 
+    });
+
+    document.getElementById('cpfCnpj').addEventListener('blur', function () {
+        var tipoPessoa = document.getElementById('tipoPessoa').value;
+        var cpfCnpj = this.value.replace(/\D/g, '');
+        var errorSpan = document.getElementById('cpfCnpjError');
+
+        if (tipoPessoa === 'Física') {
+            if (!validarCPF(cpfCnpj)) {
+                errorSpan.style.display = 'block';
+                this.value = ''; 
+            } else {
+                errorSpan.style.display = 'none';
+            }
+        } else if (tipoPessoa === 'Jurídica') {
+            if (!validarCNPJ(cpfCnpj)) {
+                errorSpan.style.display = 'block';
+                this.value = ''; 
+            } else {
+                errorSpan.style.display = 'none';
+            }
+        }
+    });
+
+    function validarCPF(cpf) {
+        if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+        var soma = 0, resto;
+        for (var i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+        resto = (soma * 10) % 11;
+        if ((resto == 10) || (resto == 11)) resto = 0;
+        if (resto != parseInt(cpf.substring(9, 10))) return false;
+        soma = 0;
+        for (var i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+        resto = (soma * 10) % 11;
+        if ((resto == 10) || (resto == 11)) resto = 0;
+        if (resto != parseInt(cpf.substring(10, 11))) return false;
+        return true;
+    }
+
+    function validarCNPJ(cnpj) {
+        if (cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj)) return false;
+        var tamanho = cnpj.length - 2;
+        var numeros = cnpj.substring(0, tamanho);
+        var digitos = cnpj.substring(tamanho);
+        var soma = 0, pos = tamanho - 7;
+        for (var i = tamanho; i >= 1; i--) {
+            soma += numeros.charAt(tamanho - i) * pos--;
+            if (pos < 2) pos = 9;
+        }
+        var resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+        if (resultado != digitos.charAt(0)) return false;
+        tamanho = tamanho + 1;
+        numeros = cnpj.substring(0, tamanho);
+        soma = 0, pos = tamanho - 7;
+        for (var i = tamanho; i >= 1; i--) {
+            soma += numeros.charAt(tamanho - i) * pos--;
+            if (pos < 2) pos = 9;
+        }
+        resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+        if (resultado != digitos.charAt(1)) return false;
+        return true;
+    }
+
+    document.getElementById('DtNascimento').addEventListener('blur', function () {
+        var dataNascimento = new Date(this.value);
+        var hoje = new Date();
+        var maiorDe18 = new Date(hoje.getFullYear() - 18, hoje.getMonth(), hoje.getDate());
+
+        if (dataNascimento > maiorDe18) {
+            $('#idadeModal').modal('show'); 
+            this.value = ''; 
+        }
+    });
+
+    document.querySelector('.modal-footer button[data-dismiss="modal"]').addEventListener('click', function () {
+        document.querySelector('#idadeModal').classList.remove('show');
+        document.querySelector('.modal-backdrop').remove();
+        document.querySelector('body').classList.remove('modal-open');
+    });
+</script>
+
